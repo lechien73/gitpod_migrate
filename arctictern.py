@@ -60,7 +60,8 @@ if __name__ == "__main__":
     print(f"Usage: python3 {sys.argv[0]} [--nobackup]")
     print("If the --nobackup switch is provided, then changed files will not be backed up.")
     print()
-    BACKUP = "--nobackup" in sys.argv
+    BACKUP = not "--nobackup" in sys.argv
+    
     if input("Start migration? Y/N ").lower() == "y":
         start_migration()
     else:
