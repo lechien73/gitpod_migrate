@@ -1,3 +1,8 @@
+"""
+arctictern.py
+A little file that does a big migration
+"""
+
 import os
 import requests
 import shutil
