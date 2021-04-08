@@ -5,7 +5,7 @@
 
 It's a migration tool for Gitpod. When students change their default editor in account settings to VSCode instead of Theia, certain parts of their older repositories may stop working.
 
-This tool can be provided to students. They will need to run it from their project directory.
+This tool can be provided to students. They will need to run it from their project directory. See the usage section below.
 
 ## How?
 
@@ -18,6 +18,12 @@ It also backs up the changed files by giving them a `.bak` suffix, though this c
 `python3 arctictern.py [--nobackup]`
 
 The `--nobackup` switch will prevent backup files from being created.
+
+To use it:
+
+1. Open the old repo in Gitpod
+2. Download this script
+3. Run it from the project directory
 
 ## Arctic Tern?
 
