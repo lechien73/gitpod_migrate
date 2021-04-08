@@ -25,6 +25,10 @@ To use it:
 2. Download this script
 3. Run it from the project directory
 
+### Important Note!
+
+**You must have changed your default Gitpod editor from Theia to VSCode in your account settings before running this script**
+
 ## Arctic Tern?
 
 It's a little bird that makes a big migration.
