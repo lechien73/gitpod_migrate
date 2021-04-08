@@ -1,6 +1,6 @@
 """
 arctictern.py
-A little file that does a big migration
+A little script that does a big migration
 """
 
 import os
@@ -12,14 +12,14 @@ BASE_URL = "https://raw.githubusercontent.com/Code-Institute-Org/gitpod-full-tem
 
 BACKUP = False
 
-FILE_LIST = [{  "filename": ".theia/settings.json",
-                "url": ".vscode/settings.json" },
-             {  "filename": ".gitpod.yml",
-                "url": ".gitpod.yml"
-             },
-             {  "filename": ".gitpod.dockerfile",
-                "url": ".gitpod.dockerfile"
-             }]
+FILE_LIST = [{"filename": ".theia/settings.json",
+              "url": ".vscode/settings.json"},
+             {"filename": ".gitpod.yml",
+              "url": ".gitpod.yml"
+              },
+             {"filename": ".gitpod.dockerfile",
+              "url": ".gitpod.dockerfile"
+              }]
 
 
 def process(file, suffix):
@@ -43,25 +43,25 @@ def start_migration():
     Calls the process function and
     renames the directory
     """
-    if os.path.isdir(".theia"):
-        for file in FILE_LIST:
-            print(f"Processing: {file['filename']}")
-            process(file["filename"], file["url"])
-        print("Renaming directory")
-        os.rename(".theia", ".vscode")
-        print("Changes saved.")
-        print("Please add, commit and push to GitHub.")
-    else:
+    if not os.path.isdir(".theia"):
         sys.exit("The .theia directory does not exist")
-
+    
+    for file in FILE_LIST:
+        print(f"Processing: {file['filename']}")
+        process(file["filename"], file["url"])
+        
+    print("Renaming directory")
+    os.rename(".theia", ".vscode")
+    print("Changes saved.")
+    print("Please add, commit and push to GitHub.")
+        
 
 if __name__ == "__main__":
     print("CI Theia to VSCode Migration Utility")
     print(f"Usage: python3 {sys.argv[0]} [--nobackup]")
     print("If the --nobackup switch is provided, then changed files will not be backed up.")
     print()
-    BACKUP = not "--nobackup" in sys.argv
-    
+    BACKUP = "--nobackup" in sys.argv
     if input("Start migration? Y/N ").lower() == "y":
         start_migration()
     else:
