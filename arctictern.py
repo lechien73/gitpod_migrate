@@ -6,6 +6,7 @@ A little script that does a big migration
 import os
 import requests
 import shutil
+import subprocess
 import sys
 
 BASE_URL = "https://raw.githubusercontent.com/Code-Institute-Org/gitpod-full-template/master/"
@@ -43,6 +44,9 @@ UPGRADE_FILE_LIST = [{"filename": ".vscode/settings.json",
                       },
                      {"filename": ".vscode/init_tasks.sh",
                       "url": ".vscode/init_tasks.sh"
+                      },
+                     {"filename": ".vscode/since_update.sh",
+                      "url": ".vscode/since_update.sh"
                       }]
 
 
@@ -86,20 +90,27 @@ def start_migration():
     if not UPGRADE:
         print("Renaming directory")
         os.rename(".theia", ".vscode")
+    else:
+        os.chmod(".vscode/since_update.sh", 0o777)
+        subprocess.run(".vscode/since_update.sh")
 
     print("Changes saved.")
     print("Please add, commit and push to GitHub.")
+    
+    if UPGRADE:
+        print("You may need to stop and restart your workspace for")
+        print("the changes to take effect.")
 
 
 if __name__ == "__main__":
-    print("CI Theia to VSCode Migration Utility")
+    print("CI Template Migration Utility")
     print(f"Usage: python3 {sys.argv[0]} [--nobackup --upgrade]")
     print("If the --nobackup switch is provided, then changed files will not be backed up.")
     print("If the --upgrade switch is provided, the repo will be updated to the latest version of the template")
     print()
     BACKUP = "--nobackup" in sys.argv
     UPGRADE = "--upgrade" in sys.argv
-    if input("Start migration? Y/N ").lower() == "y":
+    if input("Start? Y/N ").lower() == "y":
         start_migration()
     else:
         sys.exit("Migration cancelled by the user")
