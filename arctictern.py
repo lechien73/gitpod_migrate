@@ -73,7 +73,11 @@ def start_migration():
     if not os.path.isdir(".theia") and not UPGRADE:
         sys.exit("The .theia directory does not exist")
 
-    FILE_LIST = UPGRADE_FILE_LIST if do_upgrade else MIGRATE_FILE_LIST
+    FILE_LIST = UPGRADE_FILE_LIST if UPGRADE else MIGRATE_FILE_LIST
+
+    if UPGRADE and not os.path.isdir(".vscode"):
+        print("Creating .vscode directory")
+        os.mkdir(".vscode")
 
     for file in FILE_LIST:
         print(f"Processing: {file['filename']}")
