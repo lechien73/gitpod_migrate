@@ -11,7 +11,7 @@ import sys
 
 BASE_URL = "https://raw.githubusercontent.com/Code-Institute-Org/gitpod-full-template/master/"
 
-BACKUP = False
+BACKUP = True
 UPGRADE = False
 
 MIGRATE_FILE_LIST = [{"filename": ".theia/settings.json",
@@ -87,29 +87,34 @@ def start_migration():
         print(f"Processing: {file['filename']}")
         process(file["filename"], file["url"])
 
-    if not UPGRADE:
+    if not UPGRADE and not os.path.isdir(".vscode"):
         print("Renaming directory")
         os.rename(".theia", ".vscode")
-    else:
-        os.chmod(".vscode/since_update.sh", 0o777)
-        subprocess.run(".vscode/since_update.sh")
+
+    os.chmod(".vscode/since_update.sh", 0o777)
+    subprocess.run(".vscode/since_update.sh")
 
     print("Changes saved.")
     print("Please add, commit and push to GitHub.")
-    
-    if UPGRADE:
-        print("You may need to stop and restart your workspace for")
-        print("the changes to take effect.")
+    print("You may need to stop and restart your workspace for")
+    print("the changes to take effect.")
 
 
 if __name__ == "__main__":
+
+    BACKUP = "--nobackup" not in sys.argv
+    UPGRADE = "--upgrade" in sys.argv
+
     print("CI Template Migration Utility")
     print(f"Usage: python3 {sys.argv[0]} [--nobackup --upgrade]")
-    print("If the --nobackup switch is provided, then changed files will not be backed up.")
-    print("If the --upgrade switch is provided, the repo will be updated to the latest version of the template")
+
+    if not NO_BACKUP:
+        print("If the --nobackup switch is provided, then changed files will not be backed up.")
+    if not UPGRADE:
+        print("If the --upgrade switch is provided, the repo will be updated to the latest version of the template")
+
     print()
-    BACKUP = "--nobackup" in sys.argv
-    UPGRADE = "--upgrade" in sys.argv
+
     if input("Start? Y/N ").lower() == "y":
         start_migration()
     else:
