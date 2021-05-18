@@ -87,6 +87,11 @@ def start_migration():
         print(f"Processing: {file['filename']}")
         process(file["filename"], file["url"])
 
+    if not UPGRADE and os.path.isdir(".vscode"):
+        print(".vscode directory already exists")
+        if input("Overwrite? Y/N ").lower() == "y":
+            shutil.rmtree(".vscode")
+
     if not UPGRADE and not os.path.isdir(".vscode"):
         print("Renaming directory")
         os.rename(".theia", ".vscode")
