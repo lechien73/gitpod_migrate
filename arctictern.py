@@ -28,7 +28,11 @@ MIGRATE_FILE_LIST = [{"filename": ".theia/settings.json",
                       },
                      {"filename": ".theia/init_tasks.sh",
                       "url": ".vscode/init_tasks.sh"
-                      }]
+                      },
+                     {"filename": ".theia/since_update.sh",
+                      "url": ".vscode/since_update.sh"
+                      }
+                      ]
 
 UPGRADE_FILE_LIST = [{"filename": ".vscode/settings.json",
                       "url": ".vscode/settings.json"
@@ -91,6 +95,8 @@ def start_migration():
         print(".vscode directory already exists")
         if input("Overwrite? Y/N ").lower() == "y":
             shutil.rmtree(".vscode")
+        else:
+            print("You will need to manually remove the .theia directory after migration.")
 
     if not UPGRADE and not os.path.isdir(".vscode"):
         print("Renaming directory")
@@ -113,7 +119,7 @@ if __name__ == "__main__":
     print("CI Template Migration Utility")
     print(f"Usage: python3 {sys.argv[0]} [--nobackup --upgrade]")
 
-    if not NO_BACKUP:
+    if not BACKUP:
         print("If the --nobackup switch is provided, then changed files will not be backed up.")
     if not UPGRADE:
         print("If the --upgrade switch is provided, the repo will be updated to the latest version of the template")
