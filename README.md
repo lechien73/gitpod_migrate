@@ -11,13 +11,17 @@ This tool can be provided to students. They will need to run it from their proje
 
 Effectively, the tool simply downloads the latest settings files from our Gitpod Full Template repo, overwrites the existing ones and then renames the directory from `.theia` to `.vscode`.
 
+If the `--upgrade` switch is provided, then it assumes that the `.vscode` directory already exists and upgrades a repo based on an older template to the latest version.
+
 It also backs up the changed files by giving them a `.bak` suffix, though this can be switched off by running it with the `--nobackup` switch.
 
 ## Usage
 
-`python3 arctictern.py [--nobackup]`
+`python3 arctictern.py [--nobackup --upgrade]`
 
 The `--nobackup` switch will prevent backup files from being created.
+
+The `--upgrade` switch performs an upgrade on a repo created from an earlier version of the VSCode-based template.
 
 To use it:
 
