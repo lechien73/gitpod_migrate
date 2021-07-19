@@ -26,16 +26,24 @@ MIGRATE_FILE_LIST = [{"filename": ".theia/settings.json",
                      {"filename": ".theia/heroku_config.sh",
                       "url": ".vscode/heroku_config.sh"
                       },
+                      {"filename": ".theia/uptime.sh",
+                      "url": ".vscode/uptime.sh"
+                      },
                      {"filename": ".theia/init_tasks.sh",
                       "url": ".vscode/init_tasks.sh"
-                      },
-                     {"filename": ".theia/since_update.sh",
-                      "url": ".vscode/since_update.sh"
-                      }
-                      ]
+                      }]
 
-UPGRADE_FILE_LIST = [{"filename": ".vscode/settings.json",
+UPGRADE_FILE_LIST = [{"filename": ".vscode/client.cnf",
+                      "url": ".vscode/client.cnf"
+                      },
+                     {"filename": ".vscode/mysql.cnf",
+                      "url": ".vscode/mysql.cnf"
+                      },
+                     {"filename": ".vscode/settings.json",
                       "url": ".vscode/settings.json"
+                      },
+                     {"filename": ".vscode/launch.json",
+                      "url": ".vscode/launch.json"
                       },
                      {"filename": ".gitpod.yml",
                       "url": ".gitpod.yml"
@@ -49,8 +57,11 @@ UPGRADE_FILE_LIST = [{"filename": ".vscode/settings.json",
                      {"filename": ".vscode/init_tasks.sh",
                       "url": ".vscode/init_tasks.sh"
                       },
-                     {"filename": ".vscode/since_update.sh",
-                      "url": ".vscode/since_update.sh"
+                     {"filename": ".vscode/uptime.sh",
+                      "url": ".vscode/uptime.sh"
+                      },
+                     {"filename": ".vscode/start_mysql.sh",
+                      "url": ".vscode/start_mysql.sh"
                       }]
 
 
