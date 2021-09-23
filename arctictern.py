@@ -3,6 +3,7 @@ arctictern.py
 A little script that does a big migration
 """
 
+import json
 import os
 import requests
 import shutil
@@ -12,7 +13,10 @@ import sys
 BASE_URL = "https://raw.githubusercontent.com/Code-Institute-Org/gitpod-full-template/master/"
 
 BACKUP = True
-UPGRADE = False
+MIGRATE = False
+CURRENT_VERSION = 1.0
+THIS_VERSION = 1.0
+
 
 MIGRATE_FILE_LIST = [{"filename": ".theia/settings.json",
                       "url": ".vscode/settings.json"
@@ -60,9 +64,56 @@ UPGRADE_FILE_LIST = [{"filename": ".vscode/client.cnf",
                      {"filename": ".vscode/uptime.sh",
                       "url": ".vscode/uptime.sh"
                       },
-                     {"filename": ".vscode/start_mysql.sh",
-                      "url": ".vscode/start_mysql.sh"
+                     {"filename": ".vscode/arctictern.py",
+                      "url": ".vscode/arctictern.py"
                       }]
+
+
+def needs_upgrade():
+    """
+    Checks the version of the current template against
+    this version.
+    Returns True if upgrade is needed, False if not.
+    """
+
+    try:
+        with open(".vscode/version.txt", "r") as f:
+            THIS_VERSION = float(f.read())
+    except:
+        THIS_VERSION = 1.0
+        with open(".vscode/version.txt", "w") as f:
+            f.write(THIS_VERSION)
+    
+    r = requests.get(BASE_URL + ".vscode/version.txt")
+    CURRENT_VERSION = float(r.content)
+    print(CURRENT_VERSION)
+
+    return CURRENT_VERSION > THIS_VERSION
+
+
+def make_new_yml():
+
+    with open(".gitpod.yml", "w") as f:
+        f.write(YML_CONTENT)
+
+
+def build_post_upgrade():
+
+    r = requests.get(BASE_URL + ".vscode/upgrades.json")
+    upgrades = json.loads(r.content.decode("utf-8"))
+    content = ""
+
+    for k,v in upgrades.items():
+        if float(k) > THIS_VERSION:
+            print(f"Adding version changes for {k} to post_upgrade.sh")
+            content += v
+
+    if content:
+        content += "\nsource ~/.bashrc\n"
+        with open(".vscode/post_upgrade.sh", "w") as f:
+            f.writelines(content)
+    
+    print("Built post_upgrade.sh. Restart your workspace for it to take effect")
 
 
 def process(file, suffix):
@@ -89,12 +140,12 @@ def start_migration():
     Calls the process function and
     renames the directory
     """
-    if not os.path.isdir(".theia") and not UPGRADE:
+    if not os.path.isdir(".theia") and MIGRATE:
         sys.exit("The .theia directory does not exist")
 
-    FILE_LIST = UPGRADE_FILE_LIST if UPGRADE else MIGRATE_FILE_LIST
+    FILE_LIST = MIGRATE_FILE_LIST if MIGRATE else UPGRADE_FILE_LIST
 
-    if UPGRADE and not os.path.isdir(".vscode"):
+    if not MIGRATE and not os.path.isdir(".vscode"):
         print("Creating .vscode directory")
         os.mkdir(".vscode")
 
@@ -102,19 +153,19 @@ def start_migration():
         print(f"Processing: {file['filename']}")
         process(file["filename"], file["url"])
 
-    if not UPGRADE and os.path.isdir(".vscode"):
+    if MIGRATE and os.path.isdir(".vscode"):
         print(".vscode directory already exists")
         if input("Overwrite? Y/N ").lower() == "y":
             shutil.rmtree(".vscode")
         else:
             print("You will need to manually remove the .theia directory after migration.")
 
-    if not UPGRADE and not os.path.isdir(".vscode"):
+    if MIGRATE and not os.path.isdir(".vscode"):
         print("Renaming directory")
         os.rename(".theia", ".vscode")
-
-    os.chmod(".vscode/since_update.sh", 0o777)
-    subprocess.run(".vscode/since_update.sh")
+    
+    if not MIGRATE and needs_upgrade():
+        build_post_upgrade()
 
     print("Changes saved.")
     print("Please add, commit and push to GitHub.")
@@ -125,15 +176,17 @@ def start_migration():
 if __name__ == "__main__":
 
     BACKUP = "--nobackup" not in sys.argv
-    UPGRADE = "--upgrade" in sys.argv
+    MIGRATE = "--migrate" in sys.argv
 
-    print("CI Template Migration Utility")
-    print(f"Usage: python3 {sys.argv[0]} [--nobackup --upgrade]")
+    print("CI Template Migration Utility 0.2")
+    print("---------------------------------")
+    print("The default action is to upgrade the workspace to the latest version.")
+    print(f"Usage: python3 {sys.argv[0]} [--nobackup --migrate]")
 
     if not BACKUP:
         print("If the --nobackup switch is provided, then changed files will not be backed up.")
-    if not UPGRADE:
-        print("If the --upgrade switch is provided, the repo will be updated to the latest version of the template")
+    if not MIGRATE:
+        print("If the --migrate switch is provided, the repo will be migrated from Theia to VS Code")
 
     print()
 
